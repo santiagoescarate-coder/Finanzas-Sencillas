@@ -2,8 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanzas Familiares Pro V26.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#163a2b">
+    <meta name="application-name" content="Finanzas Sencillas">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Finanzas Sencillas">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <title>Finanzas Sencillas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -397,7 +405,7 @@
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzq_xF4AK3EjPxcDN1k8IfsvmyFvB2Bg9YUZavcnxKmZCLGZjkUKy5O96QnLg4Y0XfX/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwGLasZBWrwnQq124bbE0YQIXPq4IBklZ-o6CohqBciXpOj2Dx3_oRBExDvQOiNYlTp/exec';
 
     async function apiPost(payload) {
         const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload) });
@@ -1345,6 +1353,15 @@
         }
     }
     
+
+    // PWA: registra el service worker para permitir instalación y respaldo sin conexión.
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js')
+                .catch(err => console.warn('Service Worker no pudo registrarse:', err));
+        });
+    }
+
     init();
 </script>
 </body>
