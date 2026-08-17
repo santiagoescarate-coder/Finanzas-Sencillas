@@ -525,7 +525,8 @@
             const r = await fetch(scriptURL + "?t=" + Date.now());
             if (!r.ok) throw new Error("Error HTTP " + r.status);
             const d = await r.json();
-            if (!d.ok) throw new Error(d.error || "Error del servidor");
+            if (!d || typeof d !== "object") throw new Error("Respuesta inválida del servidor");
+            if (d.ok === false) throw new Error(d.error || "Error del servidor");
 
             if (Array.isArray(d.movimientos)) {
                 db = d.movimientos.map(m => ({
@@ -542,13 +543,13 @@
                     usuario: m.usuario || "",
                     evento: m.evento || ""
                 }));
-                localStorage.setItem('db_v17', JSON.stringify(db));
+                try { localStorage.setItem('db_v17', JSON.stringify(db)); } catch (storageErr) { console.warn('No se pudo actualizar la copia local:', storageErr); }
             }
 
             if (d.config && typeof d.config === 'object') {
                 cfg = d.config;
                 validarEstructuraCfg();
-                localStorage.setItem('cfg_v17', JSON.stringify(cfg));
+                try { localStorage.setItem('cfg_v17', JSON.stringify(cfg)); } catch (storageErr) { console.warn('No se pudo guardar la configuración local:', storageErr); }
             }
 
             autoRescateCajas();
@@ -560,7 +561,7 @@
             await procesarRecurrentes();
         } catch (err) {
             console.error("Error sincronización:", err);
-            estado.innerText = "⚠️ Sin conexión — mostrando copia local";
+            estado.innerText = "⚠️ No se pudo sincronizar: " + (err.message || "error desconocido");
             estado.style.background = "#f8d7da";
             estado.style.color = "#721c24";
         }
